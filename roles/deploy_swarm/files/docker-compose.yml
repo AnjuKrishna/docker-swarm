@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+   db:
+     image: mysql:5.7
+     volumes:
+       - dbdata:/var/lib/mysql
+     environment:
+       MYSQL_ROOT_PASSWORD: admin
+       MYSQL_USER: journals
+       MYSQL_PASSWORD: admin
+     deploy:
+      mode: replicated
+      replicas: 2
+      resources:
+        # Hard limit - Docker does not allow to allocate more
+        limits:
+          cpus: ${DB_CPUS_HARD}
+          memory: ${DB_MEM_HARD}
+        # Soft limit - Docker makes best effort to return to it
+        reservations:
+          cpus: ${DB_CPUS_SOFT}
+          memory: ${DB_MEM_SOFT}
+   app:
+     depends_on:
+       - db
+     image: anjudocker/journals
+     ports:
+       - "80:8000"
+     volumes:
+       - upload:/root/upload
+     environment:
+       hibernatevalue: create
+     deploy:
+      mode: replicated
+      replicas: 2
+      #${app_replicas}
+      resources:
+        limits:
+          cpus: ${APP_CPUS_HARD}
+          memory: ${APP_MEM_HARD}
+        reservations:
+          cpus: ${APP_CPUS_SOFT}
+          memory: ${APP_MEM_SOFT}
+volumes:
+  dbdata:
+    driver: "cloudstor:aws"
+  upload:
+    driver: "cloudstor:aws"
+

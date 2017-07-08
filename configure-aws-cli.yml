@@ -1,0 +1,8 @@
+- hosts: localhost
+  roles:
+    - role: 'aws-cli-configure'
+      aws_output_format: 'json'
+      aws_region: 'us-east-2'
+      aws_access_key_id: 'AKIAJNZXLKMNCC6D4P4Q'
+      aws_secret_access_key: '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'
+    - role:  'docker-aws' 

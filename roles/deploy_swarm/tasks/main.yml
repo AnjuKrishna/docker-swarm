@@ -1,0 +1,33 @@
+---
+- name: install python 2
+  become: yes
+  raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+- name: copy the env.sh file which allows to configure the service
+  become: yes
+  copy:
+    src: "{{ role_path }}/files/env.sh"
+    dest: /home/docker/env.sh
+    owner: docker
+    group: docker
+    mode: 0644
+
+- name: copy docker-compose file
+  become: yes
+  copy:
+    src: "{{ role_path }}/files/docker-compose.yml"
+    dest: /home/docker/docker-compose.yml
+    owner: docker
+    group: docker
+    mode: 0644
+
+- name:  source the file which sets environment vars for docker swarm
+  become: yes
+  shell: "source env.sh"
+
+- name: start project
+  docker_service:
+    project_src: "{{ docker_service_deploy_project_dir }}"
+    pull: "{{ docker_service_deploy_pull }}"
+    state: present
+    restarted: yes
+

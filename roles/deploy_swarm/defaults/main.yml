@@ -1,0 +1,5 @@
+---
+# defaults file for deploy_swarm
+docker_service_deploy_src: docker-compose.yml
+docker_service_deploy_pull: yes
+docker_service_deploy_project_dir: /home/docker
